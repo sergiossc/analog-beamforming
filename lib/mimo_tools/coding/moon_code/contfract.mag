@@ -1,0 +1,66 @@
+// an example of continued fraction calculation
+
+F := FiniteField(5);
+R<x> := PolynomialRing(F);
+
+u0 := 1 + 2*x + 3*x^2 + 4*x^3 + 3*x^5;
+u1 := 1 + 3*x^2 + 2*x^3;
+
+g,s,t := XGCD(u0,u1);
+
+a0 := u0 div u1;
+u2 := u0 mod u1;
+
+a1 := u1 div u2;
+u3 := u1 mod u2;
+
+a2 := u2 div u3;
+u4 := u2 mod u3;
+
+a3 := u3 div u4;
+u5 := u3 mod u4;  // u5 is zero
+
+// Check:
+a0 + 1/(a1 + 1/(a2 + 1/a3));
+
+mu := Degree(u0);
+nu := Degree(u1);
+N := mu + nu;
+
+RR<y> := PowerSeriesRing(F);
+A := RR!(u0/u1);
+es := ElementToSequence(Truncate(A));
+AN := R!es[1..N+1];
+
+
+//a := u0;
+//b := u1;
+a := x^(N+1);
+b := AN;
+// mu := 0;
+// nu := 0;
+
+// run the Euclidean alg
+rm1 := a;
+ri := b;
+sm1 := 1;
+si := 0;
+tm1 := 0;
+ti := 1;
+
+while(ri ne 0) do
+   rm2 := rm1;
+   rm1 := ri;
+   tm2 := tm1;
+   tm1 := ti;
+   sm2 := sm1;
+   sm1 := si;
+   qi := rm2 div rm1;
+print qi;
+   ri := rm2 mod rm1;
+// print ri;
+   si := sm2 - qi*sm1;
+   ti := tm2 - qi*tm1;
+   if(Degree(ri) le mu and Degree(ti) le nu) then break; end if ;
+end while;
+

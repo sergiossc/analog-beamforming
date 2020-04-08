@@ -1,0 +1,3 @@
+H2 = [1 1; 1 -1];
+H = kron(kron(eye(4),H2),eye(1))*kron(kron(eye(2),H2),eye(2))* ...
+	kron(kron(eye(1),H2),eye(4));

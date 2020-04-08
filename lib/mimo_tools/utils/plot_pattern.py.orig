@@ -1,0 +1,45 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.constants import c
+from numpy.linalg import norm
+
+fc = 60*(10**9) # freq de operacao 60 GHz
+wave_length = c/fc # cumprimento de onda
+distance = wave_length * 0.5
+
+w1 = 1/2 * (1 + 1j) 
+w2 = 1/2 * (1 - 1j)
+
+#rang = np.deg2rad(np.arange(-180, 180))
+#x = np.random.choice(rang) 
+#y = np.random.choice(rang) 
+#w1 = np.exp(1j * np.pi/2) 
+#w2 = np.exp(1j * np.pi) 
+
+
+
+
+w = np.array([w1, w2])
+
+theta = np.arange(-180, 180)
+
+
+gain_db1 = np.zeros(len(theta))
+gain_db2 = np.zeros(len(theta))
+
+for i in range(len(theta)):
+    t = np.deg2rad(theta[i])
+    a1 = [np.exp(1j * 2 * np.pi * n * distance * np.sin(t)/wave_length) for n in range(len(w))]
+    a2 = [np.exp(-1j * 2 * np.pi * n * distance * np.sin(t)/wave_length) for n in range(len(w))]
+    product1 = np.matmul(w.T, a1)
+    product2 = np.matmul(w.T, a2)
+    #gain_db1[i] = 10 * np.log10((norm(product))/np.abs(np.matmul(w.conj().T, w)))
+    gain_db1[i] = 10 * np.log10((np.abs(product1) ** 2)/np.abs(np.matmul(w.conj().T, w)))
+    gain_db2[i] = 10 * np.log10((np.abs(product2) ** 2)/np.abs(np.matmul(w.conj().T, w)))
+
+plt.plot(theta, gain_db1, '-', label='gain_db1')
+plt.plot(theta, gain_db2, '-', label='gain_db2')
+plt.ylabel('Gain(dB)')
+plt.xlabel('Angle(deg)')
+plt.legend()
+plt.show()
